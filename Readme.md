@@ -1,3 +1,5 @@
+﻿[![Build Status](https://travis-ci.org/jvelills/json_rpc.svg?branch=master)](https://travis-ci.org/jvelilla/json_rpc)
+
 # Eiffel JSON RPC library.
 
 A light weight remote procedure call protocol. It is designed to be simple!
