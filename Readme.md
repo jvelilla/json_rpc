@@ -1,4 +1,5 @@
-﻿[![Build Status](https://travis-ci.org/jvelills/json_rpc.svg?branch=master)](https://travis-ci.org/jvelilla/json_rpc)
+﻿[![Build Status](https://travis-ci.org/jvelilla/json_rpc.svg?branch=master)](https://travis-ci.org/jvelilla/json_rpc)
+
 
 # Eiffel JSON RPC library.
 
