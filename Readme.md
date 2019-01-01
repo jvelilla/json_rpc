@@ -7,7 +7,7 @@ Supported version. 2.0
 
 ## Built With 
 
-* [json](https://github.com/eiffelhub/json/) - The json library used.
+* [Eiffel JSON library](https://github.com/eiffelhub/json/) - The json library used.
 
 ## Contributing
 
