@@ -21,7 +21,7 @@ feature -- Convertion
 			if attached {JSON_RPC_REQUEST} obj as o then
 				create jo.make
 				if attached o.jsonrpc as l_jsonrcp then
-					jo.put_string (l_jsonrcp, jsonrcp_key)
+					jo.put_string (l_jsonrcp, jsonrpc_key)
 				end
 				if attached o.method as l_method then
 					jo.put_string (l_method, method_key)
@@ -66,15 +66,15 @@ feature -- Convert JSON_RCP_ID
 			ctx.set_default_serializer (create {JSON_REFLECTOR_SERIALIZER})
 			ctx.register_serializer (create {TABLE_ITERABLE_JSON_SERIALIZER [detachable ANY, READABLE_STRING_GENERAL]}, {TABLE_ITERABLE [detachable ANY, READABLE_STRING_GENERAL]})
 			ctx.register_serializer (create {ITERABLE_JSON_SERIALIZER [detachable ANY]}, {ITERABLE [detachable ANY]})
-		
+
 			Result := conv_to.to_json (obj, ctx)
 		end
 
 feature {NONE} -- Implementation
 
-	jsonrcp_key: STRING
+	jsonrpc_key: STRING
 		do
-			create Result.make_from_string ("jsonrcp")
+			create Result.make_from_string ("jsonrpc")
 		ensure
 			instance_free: class
 		end

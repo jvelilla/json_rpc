@@ -21,7 +21,7 @@ feature -- Convertion
 			if attached {JSON_RPC_RESPONSE} obj as o then
 				create jo.make
 				if attached o.jsonrpc as l_jsonrcp then
-					jo.put_string (l_jsonrcp, jsonrcp_key)
+					jo.put_string (l_jsonrcp, jsonrpc_key)
 				end
 				if attached o.jresult as l_result then
 					jo.put (to_json_value (l_result), result_key)
@@ -102,9 +102,9 @@ feature {NONE} -- Implementation JSON_RPC_ERROR
 
 feature {NONE} -- Implementation JSON RPC RESPONSE
 
-	jsonrcp_key: STRING
+	jsonrpc_key: STRING
 		do
-			create Result.make_from_string ("jsonrcp")
+			create Result.make_from_string ("jsonrpc")
 		ensure
 			instance_free: class
 		end
