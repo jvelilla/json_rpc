@@ -1,49 +1,63 @@
 note
-	description: "[
-		Object Representing JSON RPc Parameters
-		
-		Parameter Structures
-		If present, parameters for the rpc call MUST be provided as a Structured value. Either by-position through an Array or by-name through an Object.
-
-		by-position: params MUST be an Array, containing the values in the Server expected order.
-		by-name: params MUST be an Object, with member names that match the Server expected parameter names. The absence of expected names MAY result in an error being generated. The names MUST match exactly, including case, to the method's expected parameters.
-	]"
+	description: "Summary description for {JSON_RPC_RESPONSE_NAMES}."
 	date: "$Date$"
 	revision: "$Revision$"
 
-deferred class
-	JSON_RPC_PARAMS
+class
+	JSON_RPC_RESPONSE_NAMES
 
-inherit
-	ITERABLE [ANY]
+feature -- JSON names for JSON_RPC_ERROR
 
-feature -- Status Report
-
-	is_by_name: BOOLEAN
-			-- 	Are parameters by name expected?
+	code_key: JSON_STRING
 		do
-			Result := attached {JSON_RPC_NAMED_PARAMS} Current
+			Result := "code"
+		ensure
+			instance_free: class
 		end
 
-	by_name: detachable JSON_RPC_NAMED_PARAMS
+	message_key: JSON_STRING
 		do
-			if attached {JSON_RPC_NAMED_PARAMS} Current as p then
-				Result := p
-			end
+			Result := "message"
+		ensure
+			instance_free: class
 		end
 
-	is_by_position: BOOLEAN
+	data_key: JSON_STRING
 		do
-			Result := attached {JSON_RPC_POSITIONED_PARAMS} Current
+			Result := "data"
+		ensure
+			instance_free: class
 		end
 
-	by_position: detachable JSON_RPC_POSITIONED_PARAMS
+feature -- JSON names for JSON RPC RESPONSE
+
+	jsonrpc_key: JSON_STRING
 		do
-			if attached {JSON_RPC_POSITIONED_PARAMS} Current as p then
-				Result := p
-			end
+			Result := "jsonrpc"
+		ensure
+			instance_free: class
 		end
 
+	result_key: JSON_STRING
+		do
+			Result := "result"
+		ensure
+			instance_free: class
+		end
+
+	error_key: JSON_STRING
+		do
+			Result := "error"
+		ensure
+			instance_free: class
+		end
+
+	id_key: JSON_STRING
+		do
+			Result := "id"
+		ensure
+			instance_free: class
+		end
 
 note
 	copyright: "Copyright (c) 1984-2019, Eiffel Software"

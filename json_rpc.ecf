@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <system xmlns="http://www.eiffel.com/developers/xml/configuration-1-19-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-19-0 http://www.eiffel.com/developers/xml/configuration-1-19-0.xsd" name="json_rpc" uuid="D720A71C-93CB-457A-BD70-237C14DBC097" library_target="json_rpc">
+	<description>JSON RPC library</description>
 	<target name="json_rpc">
 		<root all_classes="true"/>
+		<file_rule>
+			<exclude>/EIFGENs$</exclude>
+			<exclude>/\.git$</exclude>
+			<exclude>/\.svn$</exclude>
+		</file_rule>
 		<option warning="true">
 			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
 		</option>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="json" location="$ISE_LIBRARY\contrib\library\text\parser\json\library\json.ecf"/>
-		<cluster name="json_rpc" location=".\" recursive="true">
-			<file_rule>
-				<exclude>/.svn$</exclude>
-				<exclude>/CVS$</exclude>
-				<exclude>/EIFGENs$</exclude>
-			</file_rule>
-		</cluster>
+		<cluster name="json_rpc" location=".\src\" recursive="true"/>
 	</target>
 </system>

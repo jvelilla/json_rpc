@@ -9,6 +9,10 @@ class
 inherit
 	JSON_DESERIALIZER
 
+	JSON_RPC_REQUEST_NAMES
+		export
+			{NONE} all
+		end
 
 feature -- Conversion
 
@@ -66,56 +70,57 @@ feature -- From JSON
 			end
 		end
 
-	from_json_rcp_params_by_name (a_object: JSON_OBJECT): detachable JSON_RPC_PARAMS
+	from_json_rcp_params_by_name (a_object: JSON_OBJECT): detachable JSON_RPC_NAMED_PARAMS
 		local
 			l_conv: JSON_BASIC_SERIALIZATION
 		do
 			create l_conv.make
 			if attached {STRING_TABLE [detachable ANY]} l_conv.from_json (a_object) as l_table then
-				create Result.make_by_name
-				Result.append_table (l_table)
+				create Result.make (2)
+				Result.append (l_table)
 			end
 		end
 
-	from_json_rcp_params_by_posistion (a_object: JSON_ARRAY): detachable JSON_RPC_PARAMS
+	from_json_rcp_params_by_posistion (a_object: JSON_ARRAY): detachable JSON_RPC_POSITIONED_PARAMS
 		local
 			l_conv: JSON_BASIC_SERIALIZATION
 		do
 			create l_conv.make
 			if attached {ARRAYED_LIST [detachable ANY]} l_conv.from_json (a_object) as l_list then
-				create Result.make_by_position
-				Result.append_list (l_list)
+				create Result.make (2)
+				Result.append (l_list)
 			end
 		end
 
-feature {NONE} -- Implementation JSON_RPC_REQUEST
-
-	jsonrpc_key: STRING
-		do
-			create Result.make_from_string ("jsonrpc")
-		ensure
-			instance_free: class
-		end
-
-	method_key: STRING
-		do
-			create Result.make_from_string ("method")
-		ensure
-			instance_free: class
-		end
-
-	params_key: STRING
-		do
-			create Result.make_from_string ("params")
-		ensure
-			instance_free: class
-		end
-
-	id_key: STRING
-		do
-			create Result.make_from_string ("id")
-		ensure
-			instance_free: class
-		end
-
+note
+	copyright: "Copyright (c) 1984-2019, Eiffel Software"
+	license: "GPL version 2 (see http://www.eiffel.com/licensing/gpl.txt)"
+	licensing_options: "http://www.eiffel.com/licensing"
+	copying: "[
+			This file is part of Eiffel Software's Eiffel Development Environment.
+			
+			Eiffel Software's Eiffel Development Environment is free
+			software; you can redistribute it and/or modify it under
+			the terms of the GNU General Public License as published
+			by the Free Software Foundation, version 2 of the License
+			(available at the URL listed under "license" above).
+			
+			Eiffel Software's Eiffel Development Environment is
+			distributed in the hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even the implied warranty
+			of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+			See the GNU General Public License for more details.
+			
+			You should have received a copy of the GNU General Public
+			License along with Eiffel Software's Eiffel Development
+			Environment; if not, write to the Free Software Foundation,
+			Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+		]"
+	source: "[
+			Eiffel Software
+			5949 Hollister Ave., Goleta, CA 93117 USA
+			Telephone 805-685-1006, Fax 805-685-6869
+			Website http://www.eiffel.com
+			Customer support http://support.eiffel.com
+		]"
 end

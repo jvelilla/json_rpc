@@ -3,37 +3,12 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 class
-	APPLICATION
+	TEST_JSON_RPC_SET
 
-create
-	make
+inherit
+	EQA_TEST_SET
 
-feature {NONE} -- Initialization
-
-	make
-		do
-			-- RPC Response object to json
-			test_rpc_response_to_json
-			test_rpc_response2_to_json
-			test_rpc_response3_to_json
-			test_rpc_response4_to_json
-
-			-- RPC Ressponse Json to object
-			test_json_to_rpc_response_object
-			test_json2_to_rpc_response_object
-
-
-			-- RPC Request object to json
-			test_rcp_request_to_json
-			test_rcp_request2_to_json
-			test_rcp_request3_to_json
-			test_rcp_request4_to_json
-			test_rcp_request5_to_json
-
-			-- RPC Request json to object
-			test_json_to_rcp_object
-			test_json2_to_rcp_object
-		end
+feature -- Tests
 
 	test_rpc_response_to_json
 			-- {"jsonrpc": "2.0", "result": 19, "id": 1}
@@ -53,8 +28,11 @@ feature {NONE} -- Initialization
 
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+							{"jsonrpc":"2.0","result":19,"id":1}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
@@ -76,8 +54,11 @@ feature {NONE} -- Initialization
 
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+							{"jsonrpc":"2.0","result":-19,"id":2}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
@@ -102,8 +83,11 @@ feature {NONE} -- Initialization
 
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+						{"jsonrpc":"2.0","error":{"code":-32601,"message":"Method not found"},"id":1}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
@@ -124,8 +108,11 @@ feature {NONE} -- Initialization
 
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+							{"jsonrpc":"2.0","error": {"code": -32600, "message": "Invalid Request"}, "id": null}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
@@ -143,6 +130,12 @@ feature {NONE} -- Initialization
 					if attached l_object.id as l_id then
 						print (l_id.id)
 						io.put_new_line
+					end
+
+					if attached {JSON_VALUE} conv.to_json (l_object) as lj then
+						assert ("expected", is_expected_string (lj, jsonres))
+					else
+						assert ("to_json", False)
 					end
 				end
 			end
@@ -175,18 +168,23 @@ feature {NONE} -- Initialization
 						print (l_id.id)
 						io.put_new_line
 					end
+					if attached {JSON_VALUE} conv.to_json (l_object) as lj then
+						assert ("expected", is_expected_string (lj, jsonres2))
+					else
+						assert ("to_json", False)
+					end
 				end
 			end
 		end
 
 
-	test_rcp_request_to_json
+	test_rpc_request_to_json
 			-- {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1}
 		local
 			j: JSON_RPC_REQUEST
 			conv: JSON_RPC_REQUEST_CONVERTER
 			l_id: JSON_RPC_ID
-			l_params: JSON_RPC_PARAMS
+			l_params: JSON_RPC_POSITIONED_PARAMS
 		do
 			create conv
 			create j
@@ -197,24 +195,27 @@ feature {NONE} -- Initialization
 			l_id.set_id (1)
 			j.set_id (l_id)
 
-			create l_params.make_by_position
-			l_params.add_by_position (42)
-			l_params.add_by_position (23)
+			create l_params.make (2)
+			l_params.extend (42)
+			l_params.extend (23)
 			j.set_params (l_params)
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+						{"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": 1}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
-	test_rcp_request2_to_json
+	test_rpc_request2_to_json
 			-- {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": "1"}
 		local
 			j: JSON_RPC_REQUEST
 			conv: JSON_RPC_REQUEST_CONVERTER
 			l_id: JSON_RPC_ID
-			l_params: JSON_RPC_PARAMS
+			l_params: JSON_RPC_POSITIONED_PARAMS
 		do
 			create conv
 			create j
@@ -223,24 +224,27 @@ feature {NONE} -- Initialization
 			create l_id
 			l_id.set_id ("1")
 			j.set_id (l_id)
-			create l_params.make_by_position
-			l_params.add_by_position (42)
-			l_params.add_by_position (23)
+			create l_params.make (2)
+			l_params.extend (42)
+			l_params.extend (23)
 			j.set_params (l_params)
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+						{"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": "1"}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
-	test_rcp_request3_to_json
+	test_rpc_request3_to_json
 			-- {"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": null}
 		local
 			j: JSON_RPC_REQUEST
 			conv: JSON_RPC_REQUEST_CONVERTER
 			l_id: JSON_RPC_ID
-			l_params: JSON_RPC_PARAMS
+			l_params: JSON_RPC_POSITIONED_PARAMS
 		do
 			create conv
 			create j
@@ -250,24 +254,27 @@ feature {NONE} -- Initialization
 			l_id.set_id (Void)
 			j.set_id (l_id)
 
-			create l_params.make_by_position
-			l_params.add_by_position (42)
-			l_params.add_by_position (23)
+			create l_params.make (2)
+			l_params.extend (42)
+			l_params.extend (23)
 			j.set_params (l_params)
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+						{"jsonrpc": "2.0", "method": "subtract", "params": [42, 23], "id": null}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
-	test_rcp_request4_to_json
+	test_rpc_request4_to_json
 			-- {"jsonrpc": "2.0", "method": "subtract", "params": {"minuend": 42, "subtrahend": 23}, "id": 3}
 		local
 			j: JSON_RPC_REQUEST
 			conv: JSON_RPC_REQUEST_CONVERTER
 			l_id: JSON_RPC_ID
-			l_params: JSON_RPC_PARAMS
+			l_params: JSON_RPC_NAMED_PARAMS
 		do
 			create conv
 			create j
@@ -277,24 +284,27 @@ feature {NONE} -- Initialization
 			l_id.set_id (3)
 			j.set_id (l_id)
 
-			create l_params.make_by_name
-			l_params.add_by_name ("minuend", 42)
-			l_params.add_by_name ("subtrahend", 23)
+			create l_params.make (2)
+			l_params ["minuend"] := 42
+			l_params ["subtrahend"] := 23
 			j.set_params (l_params)
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+						{"jsonrpc": "2.0", "method": "subtract", "params": {"minuend": 42, "subtrahend": 23}, "id": 3}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
-	test_rcp_request5_to_json
+	test_rpc_request5_to_json
 			--  {"version": "2.0", "method": "confirmFruitPurchase", "params": [["apple", "orange", "mangoes"], 1.123], "id": "194521489"}
 		local
 			j: JSON_RPC_REQUEST
 			conv: JSON_RPC_REQUEST_CONVERTER
 			l_id: JSON_RPC_ID
-			l_params: JSON_RPC_PARAMS
+			l_params: JSON_RPC_POSITIONED_PARAMS
 		do
 			create conv
 			create j
@@ -304,25 +314,28 @@ feature {NONE} -- Initialization
 			l_id.set_id ("194521489")
 			j.set_id (l_id)
 
-			create l_params.make_by_position
---			l_params.add_by_position (<<"apple", "orange", "mangoes">>)
---			l_params.add_by_position (["apple", "orange", "mangoes"])
-			l_params.add_by_position (1.123)
+			create l_params.make (3)
+			l_params.extend (<<"apple", "orange", "mangoes">>)
+--			l_params.extend (["apple", "orange", "mangoes"])
+			l_params.extend (1.123)
 			j.set_params (l_params)
 
 			if attached {JSON_VALUE} conv.to_json (j) as lj then
-				print (lj.representation)
-				io.put_new_line
+				assert ("expected", is_expected_string (lj, "[
+						{"jsonrpc": "2.0", "method": "confirmFruitPurchase", "params": [["apple", "orange", "mangoes"], 1.123], "id": "194521489"}
+					]"))
+			else
+				assert ("to_json", False)
 			end
 		end
 
 
-	test_json_to_rcp_object
+	test_json_to_rpc_object
 		local
 			conv: JSON_RPC_REQUEST_CONVERTER
 		do
 			create conv
-			if attached json_value (jsonrcp1) as l_value then
+			if attached json_value (jsonrpc1) as l_value then
 				if attached {JSON_RPC_REQUEST} conv.from_json (l_value) as l_object then
 					print (l_object.jsonrpc)
 					io.put_new_line
@@ -341,17 +354,21 @@ feature {NONE} -- Initialization
 					then
 						print (ll_id)
 					end
-
+					if attached {JSON_VALUE} conv.to_json (l_object) as lj then
+						assert ("expected", is_expected_string (lj, jsonrpc1))
+					else
+						assert ("to_json", False)
+					end
 				end
 			end
 		end
 
-	test_json2_to_rcp_object
+	test_json2_to_rpc_object
 		local
 			conv: JSON_RPC_REQUEST_CONVERTER
 		do
 			create conv
-			if attached json_value (jsonrcp2) as l_value then
+			if attached json_value (jsonrpc2) as l_value then
 				if attached {JSON_RPC_REQUEST} conv.from_json (l_value) as l_object then
 					print (l_object.jsonrpc)
 					io.put_new_line
@@ -361,7 +378,7 @@ feature {NONE} -- Initialization
 						l_params.is_by_name and then
 						attached l_params.by_name as l_name
 					then
-						across l_name as ic loop
+						across l_name.items as ic loop
 							print (ic.key)
 							print (" - ")
 							print (ic.item)
@@ -373,12 +390,18 @@ feature {NONE} -- Initialization
 					then
 						print (ll_id)
 					end
-
+					if attached {JSON_VALUE} conv.to_json (l_object) as lj then
+						assert ("expected", is_expected_string (lj, jsonrpc2))
+					else
+						assert ("to_json", False)
+					end
 				end
 			end
 		end
 
-	jsonrcp1: STRING = "[
+feature -- Test data		
+
+	jsonrpc1: STRING = "[
 			{
 				"jsonrpc": "2.0", 
 				"method": "subtract", 
@@ -387,7 +410,7 @@ feature {NONE} -- Initialization
 			}
 	]"
 
-	jsonrcp2: STRING = "[
+	jsonrpc2: STRING = "[
 	 	{
 	 		"jsonrpc": "2.0", 
 	 		"method": "subtract", 
@@ -413,7 +436,22 @@ feature {NONE} -- Initialization
 		}
 	]"
 
+	is_expected_string (j: JSON_VALUE; e: STRING): BOOLEAN
+		local
+			jp: JSON_PARSER
+			s1, s2: STRING
+		do
+			s1 := j.representation
+			s2 := e
 
+			create jp.make_with_string (e)
+			jp.parse_content
+			if jp.is_parsed and then jp.is_valid and then attached jp.parsed_json_value as jv then
+				s2 := jv.representation
+			end
+
+			Result := s1.same_string (s2)
+		end
 
 	new_json_parser (a_string: STRING): JSON_PARSER
 		do
@@ -433,3 +471,4 @@ feature {NONE} -- Initialization
 		end
 
 end
+
