@@ -1,47 +1,39 @@
 note
-	description: "[
-		Object Representing JSON RPc Parameters
-		
-		Parameter Structures
-		If present, parameters for the rpc call MUST be provided as a Structured value. Either by-position through an Array or by-name through an Object.
-
-		by-position: params MUST be an Array, containing the values in the Server expected order.
-		by-name: params MUST be an Object, with member names that match the Server expected parameter names. The absence of expected names MAY result in an error being generated. The names MUST match exactly, including case, to the method's expected parameters.
-	]"
+	description: "Summary description for {JSON_RPC_REQUEST_NAMES}."
 	date: "$Date$"
 	revision: "$Revision$"
 
-deferred class
-	JSON_RPC_PARAMS
+class
+	JSON_RPC_REQUEST_NAMES
 
-inherit
-	ITERABLE [ANY]
+feature -- JSON name for JSON_RPC_REQUEST.
 
-feature -- Status Report
-
-	is_by_name: BOOLEAN
-			-- 	Are parameters by name expected?
+	jsonrpc_key: STRING
 		do
-			Result := attached {JSON_RPC_NAMED_PARAMS} Current
+			create Result.make_from_string ("jsonrpc")
+		ensure
+			instance_free: class
 		end
 
-	by_name: detachable JSON_RPC_NAMED_PARAMS
+	method_key: STRING
 		do
-			if attached {JSON_RPC_NAMED_PARAMS} Current as p then
-				Result := p
-			end
+			create Result.make_from_string ("method")
+		ensure
+			instance_free: class
 		end
 
-	is_by_position: BOOLEAN
+	params_key: STRING
 		do
-			Result := attached {JSON_RPC_POSITIONED_PARAMS} Current
+			create Result.make_from_string ("params")
+		ensure
+			instance_free: class
 		end
 
-	by_position: detachable JSON_RPC_POSITIONED_PARAMS
+	id_key: STRING
 		do
-			if attached {JSON_RPC_POSITIONED_PARAMS} Current as p then
-				Result := p
-			end
+			create Result.make_from_string ("id")
+		ensure
+			instance_free: class
 		end
 
 

@@ -1,51 +1,84 @@
 note
 	description: "[
-		Object Representing JSON RPc Parameters
+		Object Representing JSON RPC Parameters by position
 		
 		Parameter Structures
-		If present, parameters for the rpc call MUST be provided as a Structured value. Either by-position through an Array or by-name through an Object.
-
-		by-position: params MUST be an Array, containing the values in the Server expected order.
-		by-name: params MUST be an Object, with member names that match the Server expected parameter names. The absence of expected names MAY result in an error being generated. The names MUST match exactly, including case, to the method's expected parameters.
+		If present, parameters for the RPC call MUST be provided as a structured value. 
+		params MUST be an Array, containing the values in the Server expected order.
 	]"
 	date: "$Date$"
 	revision: "$Revision$"
 
-deferred class
-	JSON_RPC_PARAMS
+class
+	JSON_RPC_POSITIONED_PARAMS
 
 inherit
-	ITERABLE [ANY]
+	JSON_RPC_PARAMS
 
-feature -- Status Report
+create
+	make_empty,
+	make
 
-	is_by_name: BOOLEAN
-			-- 	Are parameters by name expected?
+feature {NONE} -- Initialization
+
+	make_empty
 		do
-			Result := attached {JSON_RPC_NAMED_PARAMS} Current
+			make (0)
 		end
 
-	by_name: detachable JSON_RPC_NAMED_PARAMS
+	make (nb: INTEGER)
+			-- Create a object with params by position
 		do
-			if attached {JSON_RPC_NAMED_PARAMS} Current as p then
-				Result := p
+			create items.make (nb)
+		end
+
+feature -- Access
+
+	has (a_index: INTEGER): BOOLEAN
+			-- Has value at position `a_index` ?
+		do
+			Result := a_index >= 1 and a_index <= items.count
+		end
+
+	item alias "[]" (a_index: INTEGER): ANY
+		require
+			has: has (a_index)
+		do
+			Result := items.i_th (a_index)
+		end
+
+feature -- Access
+
+	new_cursor: ITERATION_CURSOR [ANY]
+			-- Fresh cursor associated with current structure
+		do
+			Result := items.new_cursor
+		end
+
+feature -- Change Element
+
+	extend (a_value: ANY)
+			-- Add a parameter with value `value`.
+		do
+			items.force (a_value)
+		end
+
+	append (a_list: ITERABLE [detachable ANY])
+			-- Append to `items` list with a `a_list`.
+		do
+			across a_list as ic loop
+				if attached ic.item as l_item then
+					extend (l_item)
+				end
 			end
 		end
 
-	is_by_position: BOOLEAN
-		do
-			Result := attached {JSON_RPC_POSITIONED_PARAMS} Current
-		end
+feature -- Access
 
-	by_position: detachable JSON_RPC_POSITIONED_PARAMS
-		do
-			if attached {JSON_RPC_POSITIONED_PARAMS} Current as p then
-				Result := p
-			end
-		end
+	items: ARRAYED_LIST [ANY]
+			-- Array, containing the values in the Server expected order.
 
-
-note
+;note
 	copyright: "Copyright (c) 1984-2019, Eiffel Software"
 	license: "GPL version 2 (see http://www.eiffel.com/licensing/gpl.txt)"
 	licensing_options: "http://www.eiffel.com/licensing"
